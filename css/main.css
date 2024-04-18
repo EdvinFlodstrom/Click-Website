@@ -1,0 +1,43 @@
+.centered-instructions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.centered-instructions > * {
+    margin-top: 0em;
+    margin-bottom: 0.75em;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:enabled {
+    background-color: oklch(59.09% 0.182 142.495 / 91%);
+    color: white;
+}
+
+button:disabled {
+    background-color: oklch(62.91% 0.246 17.302 / 91%);
+    color: oklch(97.62% 0 0 / 91%);
+    cursor: not-allowed;
+}
+
+button:hover:enabled {
+    background-color: oklch(36.44% 0.101 142.5 / 84%);
+}
+
+button:active:enabled {
+    transform: translateY(1px);
+}
+
+button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(28.79% 0.076 142.5 / 78%);
+}
