@@ -7,6 +7,9 @@ const submitButton = form.querySelector('button[type="submit"]');
 const maxNumberOfButtons = 20;
 const listOfGeneratedbuttons = [];
 const classNameGeneratedButtons = 'generatedButtons';
+const buttonWidth = 100;
+const buttonHeight = 50;
+const buttonPadding = 75;
 
 numberInput.addEventListener('input', () => {
     const numberInputValue = Number(numberInput.value);
@@ -17,22 +20,41 @@ numberInput.addEventListener('input', () => {
     }
 });
 
-function getRandomPosition() {
-    const buttonWidth = 100;
-    const buttonHeight = 50;
-    const padding = 10;
+function getInstructionsBoundingBox() {
+    const instructionsDiv = document.querySelector('.centered-instructions');
+    const rect = instructionsDiv.getBoundingClientRect();
+    return {
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        left: rect.left,
+    };
+}
 
+function getRandomPosition() {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    
-    const xPos = Math.floor(Math.random() * (viewportWidth - buttonWidth - padding * 2)) + padding;
-    const yPos = Math.floor(Math.random() * (viewportHeight - buttonHeight - padding * 2)) + padding;
+    const xPos = Math.floor(Math.random() * (viewportWidth - buttonWidth - buttonPadding * 2)) + buttonPadding;
+    const yPos = Math.floor(Math.random() * (viewportHeight - buttonHeight - buttonPadding * 2)) + buttonPadding;
 
     return { xPos, yPos };
 }
 
-function isOverLapping(listOfButtons, xPosNewButton, yPosNewButton) {
+function isOverlappingInstructions(xPosNewButton, yPosNewButton) {
+    const instructionsBox = getInstructionsBoundingBox();
+    if (
+        xPosNewButton < instructionsBox.right && 
+        xPosNewButton + buttonWidth > instructionsBox.left &&
+        yPosNewButton < instructionsBox.bottom && 
+        yPosNewButton + buttonHeight > instructionsBox.top
+    ) {
+        return true;
+    }
+    return false;
+}
+
+function isOverlappingAnotherButton(listOfButtons, xPosNewButton, yPosNewButton) {
     for (const button of listOfButtons) {
         if (
             xPosNewButton < button.xPos + button.width &&
@@ -51,7 +73,7 @@ function generateNewButton(listOfButtons) {
 
     do {
         ({ xPos, yPos } = getRandomPosition())
-    } while (isOverLapping(listOfButtons, xPos, yPos));
+    } while (isOverlappingAnotherButton(listOfButtons, xPos, yPos) || isOverlappingInstructions(xPos, yPos));
 
     const button = document.createElement('button');
     button.style.position = 'absolute';
@@ -59,8 +81,11 @@ function generateNewButton(listOfButtons) {
     button.style.top = `${yPos}px`;
     button.classList.add(classNameGeneratedButtons);
 
-    button.width = button.offsetWidth;
-    button.height = button.offsetHeight;
+    document.body.appendChild(button);
+    const buttonRect = button.getBoundingClientRect();
+
+    button.width = buttonRect.width;
+    button.height = buttonRect.height;
     button.xPos = xPos;
     button.yPos = yPos;
 
@@ -69,7 +94,6 @@ function generateNewButton(listOfButtons) {
         button.disabled = true;
     });
     
-    document.body.appendChild(button);
     
     listOfButtons.push(button);
 }
