@@ -139,11 +139,15 @@ function startOrStopTimer(numberOfButtons) {
 
     } else if (numberOfButtonsRemaining <= 0) {
         stopTimer();
+        numberInput.disabled = false;
+        submitButton.disabled = false;
     }
 }
 
 form.addEventListener('submit', (event) => {
     event.preventDefault();
+    numberInput.disabled = true;
+    submitButton.disabled = true;
 
     const buttonsToRemove = document.querySelectorAll(`.${classNameGeneratedButtons}`);
     buttonsToRemove.forEach(element => {
