@@ -3,17 +3,23 @@
 const form = document.querySelector('#numberOfButtonsForm');
 const numberInput = document.querySelector('#numberInput');
 const submitButton = form.querySelector('button[type="submit"]');
+const timerDisplay = document.querySelector('#timer');
 
-const maxNumberOfButtons = 20;
+const maxNumberOfButtons = Number(numberInput.getAttribute('max'));
+const minNumberOfButtons = Number(numberInput.getAttribute('min'));
+let numberOfButtonsRemaining;
 const listOfGeneratedbuttons = [];
 const classNameGeneratedButtons = 'generatedButtons';
 const buttonWidth = 100;
 const buttonHeight = 50;
 const buttonPadding = 75;
 
+let timerInterval;
+let startTime = Date.now();
+
 numberInput.addEventListener('input', () => {
     const numberInputValue = Number(numberInput.value);
-    if (numberInputValue > 0 && numberInputValue <= maxNumberOfButtons) {
+    if (numberInputValue >= minNumberOfButtons && numberInputValue <= maxNumberOfButtons) {
         submitButton.disabled = false;
     } else {
         submitButton.disabled = true;
@@ -90,12 +96,50 @@ function generateNewButton(listOfButtons) {
     button.yPos = yPos;
 
     button.addEventListener('click', () => {
-        console.log("Hello, World!");
         button.disabled = true;
+        startOrStopTimer(listOfButtons.length);
     });
     
-    
     listOfButtons.push(button);
+}
+
+function startTimer() {
+    startTime = Date.now();
+    timerInterval = setInterval(updateTimerDisplay, 10);
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+}
+
+function updateTimerDisplay() {
+    const currentTime = Date.now() - startTime;
+    const hours = Math.floor(currentTime / (1000 * 60 * 60));
+    const minutes = Math.floor((currentTime % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((currentTime % (1000 * 60)) / 1000);
+    const milliseconds = Math.floor((currentTime % 1000));
+
+    const formattedTime = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}.${padZeroMilliseconds(milliseconds)}`;
+
+    timerDisplay.textContent = `Timer: ${formattedTime}`;
+}
+
+function padZero(number) {
+    return (number < 10 ? '0' : '') + number;
+}
+
+function padZeroMilliseconds(number) {
+    return (number < 10 ? '00' : number < 100 ? '0' : '') + number;
+}
+
+function startOrStopTimer(numberOfButtons) {
+    numberOfButtonsRemaining--; // '- 1' on the below line to match '--' here
+    if (numberOfButtonsRemaining === numberOfButtons - 1) { // First button click
+        startTimer();
+
+    } else if (numberOfButtonsRemaining <= 0) {
+        stopTimer();
+    }
 }
 
 form.addEventListener('submit', (event) => {
@@ -110,4 +154,5 @@ form.addEventListener('submit', (event) => {
     for (let i = 0; i < Number(numberInput.value); ++i) {
         generateNewButton(listOfGeneratedbuttons);
     }
+    numberOfButtonsRemaining = listOfGeneratedbuttons.length;
 });

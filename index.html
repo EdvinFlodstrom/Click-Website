@@ -13,10 +13,13 @@
         <p>The timer will start as soon as you click one of the generated buttons.</p>
         
         <form id="numberOfButtonsForm">
-            <label for="numberInput">Enter a number, 1-10:</label>
-            <input id="numberInput" name="numberInput" type="number" min="1" max="10" required>
+            <label for="numberInput">Enter a number, 1-20:</label>
+            <input id="numberInput" name="numberInput" type="number" min="2" max="20" required>
             <button type="submit" disabled="true">Submit</button>
         </form>
+        
+        <span id="timer">Timer: 00:00:00.000</span>
+
     </div>
 
     <script src="js/main.js"></script>
